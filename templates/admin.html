@@ -1,0 +1,104 @@
+{{ define "admin.html" }}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSVP overview · Wedding</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: "DM Sans", sans-serif; }
+    .font-display { font-family: "Playfair Display", serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-stone-50 text-stone-800">
+  <section class="min-h-screen bg-stone-100 px-5 py-10">
+    <div class="mx-auto max-w-7xl">
+      <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rose-700">Wedding admin</p>
+          <h1 class="font-display mt-2 text-5xl text-stone-900">RSVP overview</h1>
+        </div>
+        <a href="/" class="text-sm font-semibold text-stone-600 hover:text-stone-900">← Guest site</a>
+      </div>
+
+      <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-2xl bg-white p-6 shadow-sm">
+          <p class="text-sm text-stone-500">Invitations</p>
+          <p class="mt-1 text-3xl font-bold">{{ .TotalInvitations }}</p>
+        </div>
+        <div class="rounded-2xl bg-white p-6 shadow-sm">
+          <p class="text-sm text-stone-500">Responses</p>
+          <p class="mt-1 text-3xl font-bold">{{ .Responses }}</p>
+        </div>
+        <div class="rounded-2xl bg-white p-6 shadow-sm">
+          <p class="text-sm text-stone-500">Couples attending</p>
+          <p class="mt-1 text-3xl font-bold">{{ .AttendingCouples }}</p>
+        </div>
+        <div class="rounded-2xl bg-white p-6 shadow-sm">
+          <p class="text-sm text-stone-500">Guests attending</p>
+          <p class="mt-1 text-3xl font-bold">{{ .AttendingGuests }}</p>
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-3xl bg-white shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[900px] text-left">
+            <thead class="border-b border-stone-200 bg-stone-50">
+              <tr>
+                <th class="px-5 py-4 text-sm font-semibold">Invitation</th>
+                <th class="px-5 py-4 text-sm font-semibold">Guests</th>
+                <th class="px-5 py-4 text-sm font-semibold">Accommodation</th>
+                <th class="px-5 py-4 text-sm font-semibold">Allergies</th>
+                <th class="px-5 py-4 text-sm font-semibold">Message</th>
+                <th class="px-5 py-4 text-sm font-semibold">Submitted</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-100">
+              {{ range .Rows }}
+              <tr class="align-top">
+                <td class="px-5 py-4">
+                  <div class="font-semibold">{{ .Invitation.CoupleName }}</div>
+                  <div class="mt-1 text-xs text-stone-400">{{ .Invitation.Code }}</div>
+                </td>
+                <td class="px-5 py-4">
+                  {{ if .RSVP }}
+                    {{ range .RSVP.Guests }}
+                      {{ if .Attending }}
+                        <div class="mb-1 text-sm font-medium text-emerald-700">{{ .Name }} – coming</div>
+                      {{ else }}
+                        <div class="mb-1 text-sm text-stone-500">{{ .Name }} – not coming</div>
+                      {{ end }}
+                    {{ end }}
+                  {{ else }}
+                    —
+                  {{ end }}
+                </td>
+                <td class="px-5 py-4">
+                  {{ if .RSVP }}{{ .RSVP.Accommodation }}{{ else }}—{{ end }}
+                </td>
+                <td class="max-w-xs px-5 py-4">
+                  {{ if .RSVP }}{{ .RSVP.Allergies }}{{ else }}—{{ end }}
+                </td>
+                <td class="max-w-sm px-5 py-4">
+                  {{ if .RSVP }}{{ .RSVP.Message }}{{ else }}—{{ end }}
+                </td>
+                <td class="whitespace-nowrap px-5 py-4 text-sm text-stone-500">
+                  {{ if .RSVP }}{{ .RSVP.SubmittedAt.Format "02 Jan 2006 15:04" }}{{ else }}—{{ end }}
+                </td>
+              </tr>
+              {{ end }}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="mt-5 text-sm text-stone-500">Demo storage is in memory. Restarting the Go server clears the responses.</p>
+    </div>
+  </section>
+</body>
+</html>
+{{ end }}

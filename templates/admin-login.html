@@ -1,0 +1,86 @@
+{{ define "title" }}
+Admin login · Wedding
+{{ end }}
+
+{{ define "content" }}
+
+<section
+  class="flex min-h-screen
+         items-center justify-center
+         bg-stone-100 px-6"
+>
+
+  <form
+    action="/admin/login"
+    method="POST"
+    class="w-full max-w-md
+           rounded-3xl bg-white
+           p-8 shadow-xl"
+  >
+
+    <p
+      class="text-sm font-semibold uppercase
+             tracking-[0.25em] text-rose-700"
+    >
+      Wedding admin
+    </p>
+
+    <h1
+      class="font-display mt-2
+             text-4xl text-stone-900"
+    >
+      Sign in
+    </h1>
+
+    {{ if .Error }}
+
+    <div
+      class="mt-6 rounded-xl
+             border border-red-200
+             bg-red-50 p-4
+             text-red-700"
+    >
+      {{ .Error }}
+    </div>
+
+    {{ end }}
+
+    <label
+      for="password"
+      class="mt-7 mb-2 block
+             text-sm font-semibold"
+    >
+      Password
+    </label>
+
+    <input
+      id="password"
+      name="password"
+      type="password"
+      required
+      autocomplete="current-password"
+
+      class="w-full rounded-xl
+             border border-stone-300
+             px-4 py-3 outline-none
+             focus:border-rose-400
+             focus:ring-2 focus:ring-rose-200"
+    >
+
+    <button
+      type="submit"
+      class="mt-4 w-full rounded-xl
+             bg-stone-900 py-3.5
+             font-semibold text-white
+             transition hover:bg-stone-700"
+    >
+      Sign in
+    </button>
+
+  </form>
+
+</section>
+
+{{ end }}
+
+{{ template "base" . }}

@@ -1,0 +1,43 @@
+{{ define "success.html" }}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSVP received · Wedding</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: "DM Sans", sans-serif; }
+    .font-display { font-family: "Playfair Display", serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-stone-50 text-stone-800">
+  <section class="flex min-h-screen items-center justify-center bg-gradient-to-br from-rose-50 via-stone-50 to-amber-50 px-6 py-16">
+    <div class="max-w-xl text-center">
+      <div class="mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-rose-100 text-2xl text-rose-700">♥</div>
+      <p class="text-sm font-semibold uppercase tracking-[0.3em] text-rose-700">RSVP received</p>
+      <h1 class="font-display mt-3 text-5xl text-stone-900">
+        {{ if .Invitation }}Thank you, {{ .Invitation.CoupleName }}!{{ else }}Thank you!{{ end }}
+      </h1>
+
+      {{ if and .RSVP .RSVP.Attending }}
+      <p class="mt-6 text-lg leading-relaxed text-stone-600">
+        We're so happy you'll be joining us. Your RSVP has been saved.
+      </p>
+      {{ else }}
+      <p class="mt-6 text-lg leading-relaxed text-stone-600">
+        We're sorry you won't be able to make it, but thank you for letting us know.
+      </p>
+      {{ end }}
+
+      {{ if .Invitation }}
+      <a href="/rsvp?code={{ .Invitation.Code }}" class="mt-8 inline-block rounded-xl bg-stone-900 px-6 py-3 font-semibold text-white transition hover:bg-stone-700">Edit my RSVP</a>
+      {{ end }}
+    </div>
+  </section>
+</body>
+</html>
+{{ end }}
