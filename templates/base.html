@@ -58,43 +58,83 @@
 {{ end }}
 
 {{ define "guest-info" }}
-<section aria-labelledby="guest-info-title" class="mx-auto mt-12 w-full max-w-6xl px-5 pb-12">
-  <div class="mb-5">
-    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-rose-700">Plan your visit</p>
-    <h2 id="guest-info-title" class="font-display mt-2 text-3xl text-stone-900">Location &amp; arrival</h2>
-  </div>
-
-  <div class="grid overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm md:grid-cols-2">
-    <div class="min-h-64 bg-stone-100">
-      <iframe
-        class="h-full min-h-64 w-full border-0"
-        src="https://maps.google.com/maps?q=Ujezd%20u%20Planice%201%2C%20339%2001%20Ujezd%20u%20Planice%2C%20Czech%20Republic&amp;output=embed"
-        title="Map to &Uacute;jezd u Pl&aacute;nice 1"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        allowfullscreen
-      ></iframe>
-    </div>
-
-    <div class="flex flex-col justify-center p-6 md:p-8">
+<div class="bg-stone-50">
+  <section id="weekend" aria-labelledby="guest-info-title" class="mx-auto max-w-6xl px-5 py-14 md:py-20">
+    <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
       <div>
-        <p class="text-sm font-semibold uppercase tracking-wider text-stone-500">The venue</p>
-        <h3 class="font-display mt-2 text-2xl text-stone-900">&Uacute;jezd u Pl&aacute;nice 1</h3>
-        <p class="mt-1 text-stone-600">339 01 &Uacute;jezd u Pl&aacute;nice, Czech Republic</p>
-        <a
-          class="mt-4 inline-flex font-semibold text-rose-700 underline decoration-rose-300 underline-offset-4 hover:text-rose-900"
-          href="https://www.google.com/maps/search/?api=1&amp;query=Ujezd%20u%20Planice%201%2C%20339%2001%20Ujezd%20u%20Planice%2C%20Czech%20Republic"
-          target="_blank"
-          rel="noreferrer"
-        >Open in Google Maps</a>
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-rose-700">27–29 August 2027</p>
+        <h2 id="guest-info-title" class="font-display mt-2 text-3xl text-stone-900 md:text-4xl">A weekend together</h2>
+        <p class="mt-3 max-w-xl leading-relaxed text-stone-600">We can't wait to celebrate with you in &Uacute;jezd. The venue is ours from Friday through Sunday.</p>
       </div>
+      <a href="/static/wedding.ics" download class="inline-flex shrink-0 items-center justify-center rounded-xl bg-stone-900 px-5 py-3 font-semibold text-white transition hover:bg-stone-700">Add to calendar</a>
+    </div>
 
-      <div class="mt-7 border-t border-stone-200 pt-5">
-        <p class="text-sm font-semibold uppercase tracking-wider text-stone-500">Arrival</p>
-        <p class="mt-2 leading-relaxed text-stone-700">You can arrive on Friday and depart on Sunday. The ceremony begins at 11:00.</p>
-        <p class="mt-2 text-sm leading-relaxed text-stone-600">Please choose your accommodation preference in the RSVP.</p>
+    <nav aria-label="Wedding information" class="mt-9 flex flex-wrap gap-x-7 gap-y-3 border-y border-stone-200 py-4 text-sm font-semibold text-stone-700">
+      <a class="hover:text-rose-700" href="#weekend">The weekend</a>
+      <a class="hover:text-rose-700" href="#location">Location</a>
+      <a class="hover:text-rose-700" href="#good-to-know">Good to know</a>
+      <a class="hover:text-rose-700" href="#rsvp">RSVP</a>
+    </nav>
+
+    <div class="mt-10">
+      <h3 class="font-display text-2xl text-stone-900">The plan</h3>
+      <ol class="mt-6 grid gap-7 sm:grid-cols-3 sm:gap-5">
+        <li class="border-l-2 border-rose-300 pl-4">
+          <p class="text-sm font-semibold uppercase tracking-wider text-rose-700">Friday · 27 August</p>
+          <p class="mt-2 font-semibold text-stone-900">Arrive and settle in</p>
+        </li>
+        <li class="border-l-2 border-rose-300 pl-4">
+          <p class="text-sm font-semibold uppercase tracking-wider text-rose-700">Saturday · 28 August</p>
+          <p class="mt-2 font-semibold text-stone-900">Ceremony at 11:00</p>
+          <p class="mt-1 text-sm text-stone-600">Local time</p>
+        </li>
+        <li class="border-l-2 border-rose-300 pl-4">
+          <p class="text-sm font-semibold uppercase tracking-wider text-rose-700">Sunday · 29 August</p>
+          <p class="mt-2 font-semibold text-stone-900">Departure</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="location" aria-labelledby="location-title" class="scroll-mt-6 border-y border-stone-200 bg-white">
+    <div class="mx-auto grid max-w-6xl items-center gap-8 px-5 py-12 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:gap-12 md:py-16">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-rose-700">Find us</p>
+        <h2 id="location-title" class="font-display mt-2 text-3xl text-stone-900">The location</h2>
+        <h3 class="mt-5 text-lg font-semibold text-stone-900">Statek &Uacute;jezd u Pl&aacute;nice</h3>
+        <address class="mt-2 not-italic leading-relaxed text-stone-600">&Uacute;jezd u Pl&aacute;nice 1<br>339 01 &Uacute;jezd u Pl&aacute;nice, Czech Republic</address>
+        <a class="mt-4 inline-flex font-semibold text-rose-700 underline decoration-rose-300 underline-offset-4 hover:text-rose-900" href="https://www.google.com/maps/search/?api=1&amp;query=Ujezd%20u%20Planice%201%2C%20339%2001%20Ujezd%20u%20Planice%2C%20Czech%20Republic" target="_blank" rel="noreferrer">Open in Google Maps</a>
+      </div>
+      <div class="overflow-hidden bg-stone-100">
+        <iframe
+          class="aspect-[4/3] w-full border-0"
+          src="https://maps.google.com/maps?q=Ujezd%20u%20Planice%201%2C%20339%2001%20Ujezd%20u%20Planice%2C%20Czech%20Republic&amp;output=embed"
+          title="Map to Statek &Uacute;jezd u Pl&aacute;nice"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <section id="good-to-know" aria-labelledby="details-title" class="mx-auto max-w-6xl scroll-mt-6 px-5 py-12 md:py-16">
+    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-rose-700">A few details</p>
+    <h2 id="details-title" class="font-display mt-2 text-3xl text-stone-900">Good to know</h2>
+    <div class="mt-7 grid gap-7 border-t border-stone-200 pt-6 sm:grid-cols-3 sm:gap-8">
+      <div>
+        <h3 class="font-semibold text-stone-900">Parking</h3>
+        <p class="mt-2 leading-relaxed text-stone-600">On-site parking is in the field behind the venue. Shoes comfortable on grass are a good idea.</p>
+      </div>
+      <div>
+        <h3 class="font-semibold text-stone-900">Accommodation</h3>
+        <p class="mt-2 leading-relaxed text-stone-600">Please let us know in your RSVP if you would like help arranging a place to stay.</p>
+      </div>
+      <div>
+        <h3 class="font-semibold text-stone-900">Our witnesses</h3>
+        <p class="mt-2 leading-relaxed text-stone-600">Honz&iacute; and Anna</p>
+      </div>
+    </div>
+  </section>
+</div>
 {{ end }}

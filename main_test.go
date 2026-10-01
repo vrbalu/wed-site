@@ -35,6 +35,44 @@ func TestRenderRSVPPageWithoutSavedRSVP(t *testing.T) {
 	if !strings.Contains(rr.Body.String(), "Send my RSVP") {
 		t.Fatalf("rsvp page body missing expected button: %s", rr.Body.String())
 	}
+
+	formPosition := strings.Index(rr.Body.String(), `id="rsvp"`)
+	informationPosition := strings.Index(rr.Body.String(), `id="weekend"`)
+	if formPosition < 0 || informationPosition < 0 || formPosition > informationPosition {
+		t.Fatal("rsvp form should appear before the guest information sections")
+	}
+
+	for _, expected := range []string{
+		"Luky &amp; Lelaina",
+		"Dear Alice &amp; Bob,",
+		"reserved 2 seats",
+		"28 August",
+		"Statek &Uacute;jezd u Pl&aacute;nice",
+		"field behind the venue",
+		"Honz&iacute; and Anna",
+		"/static/wedding.ics",
+	} {
+		if !strings.Contains(rr.Body.String(), expected) {
+			t.Errorf("rsvp page body missing %q", expected)
+		}
+	}
+}
+
+func TestLandingPageIncludesGuestInformation(t *testing.T) {
+	rr := httptest.NewRecorder()
+	render(rr, "landing.html", PageData{})
+
+	for _, expected := range []string{
+		"28 August",
+		"Statek &Uacute;jezd u Pl&aacute;nice",
+		"Open in Google Maps",
+		"/static/wedding.ics",
+		"id=\"rsvp\"",
+	} {
+		if !strings.Contains(rr.Body.String(), expected) {
+			t.Errorf("landing page body missing %q", expected)
+		}
+	}
 }
 
 func TestSubmitRSVPStoresPerGuestAttendanceAndAllergies(t *testing.T) {

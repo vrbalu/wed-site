@@ -1,10 +1,11 @@
 {{ define "rsvp.html" }}
+{{ $guestNames := invitationGuestNames .Invitation }}
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RSVP · {{ if .Invitation }}{{ .Invitation.CoupleName }}{{ else }}Wedding{{ end }}</title>
+  <title>RSVP · Luky &amp; Lelaina</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,20 +16,17 @@
   </style>
 </head>
 <body class="min-h-screen bg-stone-50 text-stone-800">
-  <section class="min-h-screen bg-gradient-to-br from-rose-50 via-stone-50 to-amber-50 px-5 py-12">
-    <div class="mx-auto max-w-3xl">
-      <div class="mb-10 text-center">
+  <header class="bg-gradient-to-br from-rose-50 via-stone-50 to-amber-50 px-5 py-12 md:py-16">
+    <div class="mx-auto max-w-3xl text-center">
         <p class="text-sm font-semibold uppercase tracking-[0.3em] text-rose-700">You're invited</p>
-        <h1 class="font-display mt-3 text-5xl text-stone-900 md:text-6xl">
-          {{ if .Invitation }}{{ .Invitation.CoupleName }}{{ else }}Celebrate with us{{ end }}
-        </h1>
-        <p class="mt-4 text-stone-600">
-          {{ if .Invitation }}RSVP for {{ .Invitation.CoupleName }}{{ else }}RSVP for your upcoming celebration{{ end }}
-        </p>
-      </div>
+        <h1 class="font-display mt-3 text-5xl text-stone-900 md:text-6xl">Luky &amp; Lelaina</h1>
+        <p class="mt-4 text-lg font-medium text-stone-700">Dear {{ range $index, $name := $guestNames }}{{ if $index }} &amp; {{ end }}{{ $name }}{{ end }},</p>
+        <p class="mt-2 text-stone-600">We have reserved {{ len $guestNames }} {{ if eq (len $guestNames) 1 }}seat{{ else }}seats{{ end }} for you.</p>
+    </div>
+  </header>
 
-      {{ template "guest-info" . }}
-
+  <section id="rsvp" aria-labelledby="rsvp-title" class="scroll-mt-6 bg-rose-50/60 px-5 py-12 md:py-16">
+    <div class="mx-auto max-w-3xl">
       {{ if .Error }}
       <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-700">
         {{ .Error }}
@@ -39,10 +37,10 @@
         <input type="hidden" name="code" value="{{ if .Invitation }}{{ .Invitation.Code }}{{ end }}">
 
         <div class="space-y-4">
-          <h2 class="text-lg font-semibold text-stone-900">Who is coming?</h2>
+          <h2 id="rsvp-title" class="font-display text-3xl text-stone-900">RSVP</h2>
+          <p class="text-stone-600">Let us know who can join us.</p>
 
-          {{ $names := invitationGuestNames .Invitation }}
-          {{ range $index, $name := $names }}
+          {{ range $index, $name := $guestNames }}
           <div data-guest-card class="rounded-2xl border border-stone-200 bg-stone-50 p-4">
             <div class="mb-3 flex items-center justify-between gap-3">
               <label class="font-medium text-stone-800">{{ $name }}</label>
@@ -64,11 +62,11 @@
           <label class="block text-lg font-semibold">Accommodation</label>
           <label class="flex items-center gap-3 rounded-2xl border border-stone-200 p-3">
             <input type="radio" name="accommodation" value="I will organise myself" {{ if and .HasRSVP .RSVP (eq .RSVP.Accommodation "I will organise myself") }}checked{{ end }}>
-            <span>I will organise myself</span>
+            <span>I'll arrange my own accommodation</span>
           </label>
           <label class="flex items-center gap-3 rounded-2xl border border-stone-200 p-3">
             <input type="radio" name="accommodation" value="If you find me place, it will be awsome!" {{ if and .HasRSVP .RSVP (eq .RSVP.Accommodation "If you find me place, it will be awsome!") }}checked{{ end }}>
-            <span>If you find me place, it will be awsome!</span>
+            <span>I'd appreciate help arranging accommodation</span>
           </label>
         </div>
 
@@ -105,6 +103,8 @@
       </p>
     </div>
   </section>
+
+  {{ template "guest-info" . }}
 </body>
 </html>
 {{ end }}
