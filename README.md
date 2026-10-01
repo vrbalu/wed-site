@@ -72,13 +72,28 @@ Then replace the Tailwind CDN `<script>` in `templates/base.html` with:
 <link rel="stylesheet" href="/static/css/app.css">
 ```
 
+## Architecture and extensibility
+
+The project is intentionally split so the public HTTP layer, domain model, storage concern, and template rendering are separated. That makes it easier to evolve the app without mixing request handling and persistence logic.
+
+### Key files
+
+- `main.go`: application startup and route registration.
+- `models.go`: core invitation, RSVP, and page data structures.
+- `store.go`: in-memory persistence plus a repository-style interface designed to be replaced by a database-backed implementation.
+- `handlers.go`: request validation, form handling, and admin logic.
+- `template.go`: template setup and rendering pipeline.
+- `docs/architecture.md`: deeper technical notes for the future architecture.
+
+This is a good foundation for moving to SQLite or PostgreSQL later, because the HTTP layer already depends on a storage contract rather than a concrete in-memory map.
+
 ## What to change for production
 
 This is intentionally a sample, not a production-ready RSVP system.
 
 Recommended next steps:
 
-1. Move invitations and RSVPs from in-memory maps into SQLite/PostgreSQL.
+1. Replace the in-memory store with SQLite/PostgreSQL and migrate the current RSVP and invitation data model into tables.
 2. Generate cryptographically random, non-guessable invitation tokens instead of manually assigned codes.
 3. Add CSRF protection to forms.
 4. Use proper admin authentication and secure session storage.
@@ -89,22 +104,37 @@ Recommended next steps:
 9. Put the site behind HTTPS.
 10. Add a proper deployment configuration.
 
-## Suggested project structure
+## Suggested future project structure
 
 ```text
 wedding-rsvp/
-├── main.go
-├── go.mod
-├── package.json
-├── tailwind.config.js
+├── cmd/
+│   └── server/
+│       └── main.go
+├── internal/
+│   ├── app/
+│   │   ├── handlers.go
+│   │   └── template.go
+│   ├── domain/
+│   │   └── models.go
+│   ├── repository/
+│   │   ├── interface.go
+│   │   ├── memory.go
+│   │   └── postgres.go
+│   └── service/
+│       └── rsvp_service.go
 ├── templates/
-│   ├── base.html
-│   ├── landing.html
-│   ├── rsvp.html
-│   ├── success.html
-│   ├── admin-login.html
-│   └── admin.html
-└── static/
-    └── css/
-        └── input.css
+├── static/
+├── docs/
+│   └── architecture.md
+├── README.md
+└── go.mod
 ```
+
+## Good next improvements
+
+- Add a service layer for RSVP validation, guest counting, and summary reports.
+- Add test coverage for edge cases like duplicate invitation codes, invalid codes, and admin authentication.
+- Add database migrations and seed data.
+- Add a nicer admin experience with filters, search, and CSV export.
+- Add semantic logging and monitoring for production failures.
