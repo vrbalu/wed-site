@@ -115,10 +115,8 @@
       </form>
 
       <p class="mt-6 text-sm text-stone-500">{{ .Text.CodeHint }}</p>
-      <a class="mt-7 inline-flex font-semibold text-[#356f60] underline decoration-[#94cbb8] underline-offset-4 transition-colors hover:text-[#23483f]" href="#weekend">{{ .Text.ExploreDetails }}</a>
     </div>
   </section>
-  {{ template "guest-info" . }}
   <script>
     const logoVideo = document.querySelector("#logo-animation");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");

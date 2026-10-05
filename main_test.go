@@ -38,8 +38,8 @@ func TestRenderRSVPPageWithoutSavedRSVP(t *testing.T) {
 
 	formPosition := strings.Index(rr.Body.String(), `id="rsvp"`)
 	informationPosition := strings.Index(rr.Body.String(), `id="weekend"`)
-	if formPosition < 0 || informationPosition < 0 || formPosition > informationPosition {
-		t.Fatal("rsvp form should appear before the guest information sections")
+	if formPosition < 0 || informationPosition < 0 || formPosition < informationPosition {
+		t.Fatal("guest information should appear before the rsvp form")
 	}
 
 	for _, expected := range []string{
@@ -51,6 +51,7 @@ func TestRenderRSVPPageWithoutSavedRSVP(t *testing.T) {
 		"field behind the venue",
 		"Honzí and Anna",
 		"/static/wedding.ics",
+		"?code=ALICE-BOB-7K2P",
 	} {
 		if !strings.Contains(rr.Body.String(), expected) {
 			t.Errorf("rsvp page body missing %q", expected)
@@ -58,19 +59,22 @@ func TestRenderRSVPPageWithoutSavedRSVP(t *testing.T) {
 	}
 }
 
-func TestLandingPageIncludesGuestInformation(t *testing.T) {
+func TestLandingPageKeepsInvitationDetailsPrivate(t *testing.T) {
 	rr := httptest.NewRecorder()
 	render(rr, "landing.html", PageData{})
 
 	for _, expected := range []string{
-		"28 August",
-		"Statek &Uacute;jezd u Pl&aacute;nice",
-		"Open in Google Maps",
-		"/static/wedding.ics",
 		"id=\"rsvp\"",
+		"Invitation code",
 	} {
 		if !strings.Contains(rr.Body.String(), expected) {
 			t.Errorf("landing page body missing %q", expected)
+		}
+	}
+
+	for _, privateDetail := range []string{"id=\"weekend\"", "Statek", "The plan", "/static/wedding.ics"} {
+		if strings.Contains(rr.Body.String(), privateDetail) {
+			t.Errorf("landing page unexpectedly reveals %q", privateDetail)
 		}
 	}
 }
@@ -133,6 +137,71 @@ func TestInvalidInvitationErrorUsesHostLanguage(t *testing.T) {
 
 	if !strings.Contains(res.Body.String(), "Tento kód pozvánky se nepodařilo najít") {
 		t.Fatalf("Czech page should show a Czech invitation error: %s", res.Body.String())
+	}
+}
+
+func TestCalendarExportUsesHostLanguage(t *testing.T) {
+	tests := []struct {
+		host        string
+		summary     string
+		description string
+	}{
+		{
+			host:        "en.example.com",
+			summary:     "SUMMARY;LANGUAGE=en:Luky and Lelaina's Wedding",
+			description: "DESCRIPTION;LANGUAGE=en:Ceremony at 11:00 local time.",
+		},
+		{
+			host:        "cs.example.com",
+			summary:     "SUMMARY;LANGUAGE=cs:Svatba Lukyho a Lelainy",
+			description: "DESCRIPTION;LANGUAGE=cs:Obřad začíná v 11:00 místního času.",
+		},
+		{
+			host:        "de.example.com",
+			summary:     "SUMMARY;LANGUAGE=de:Hochzeit von Luky und Lelaina",
+			description: "DESCRIPTION;LANGUAGE=de:Die Trauung beginnt um 11:00 Uhr Ortszeit.",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.host, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "http://"+test.host+"/static/wedding.ics?code=ALICE-BOB-7K2P", nil)
+			res := httptest.NewRecorder()
+
+			calendarHandler(res, req)
+
+			if res.Code != http.StatusOK {
+				t.Fatalf("calendar export returned %d", res.Code)
+			}
+			if res.Header().Get("Content-Type") != "text/calendar; charset=utf-8" {
+				t.Errorf("unexpected calendar content type: %q", res.Header().Get("Content-Type"))
+			}
+			if !strings.Contains(res.Body.String(), test.summary) || !strings.Contains(res.Body.String(), test.description) {
+				t.Errorf("calendar export for %q is not localized: %s", test.host, res.Body.String())
+			}
+
+			for _, line := range strings.Split(strings.TrimSuffix(res.Body.String(), "\r\n"), "\r\n") {
+				if len([]byte(line)) > 75 {
+					t.Errorf("calendar line exceeds 75 octets: %q", line)
+				}
+			}
+		})
+	}
+}
+
+func TestCalendarExportRequiresValidInvitationCode(t *testing.T) {
+	for _, requestURL := range []string{
+		"http://en.example.com/static/wedding.ics",
+		"http://en.example.com/static/wedding.ics?code=INVALID",
+	} {
+		req := httptest.NewRequest(http.MethodGet, requestURL, nil)
+		res := httptest.NewRecorder()
+
+		calendarHandler(res, req)
+
+		if res.Code != http.StatusSeeOther || res.Header().Get("Location") != "/" {
+			t.Errorf("calendar request %q should redirect to the code entry page", requestURL)
+		}
 	}
 }
 

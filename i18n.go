@@ -40,6 +40,8 @@ type Translation struct {
 	WeekendTitle             string
 	WeekendIntro             string
 	AddCalendar              string
+	CalendarTitle            string
+	CalendarDescription      string
 	NavWeekend               string
 	NavLocation              string
 	NavDetails               string
@@ -144,6 +146,8 @@ var translations = map[Language]Translation{
 		WeekendTitle:             "A weekend together",
 		WeekendIntro:             "We can't wait to celebrate with you in Újezd. The venue is ours from Friday through Sunday.",
 		AddCalendar:              "Add to calendar",
+		CalendarTitle:            "Luky and Lelaina's Wedding",
+		CalendarDescription:      "Ceremony at 11:00 local time.",
 		NavWeekend:               "The weekend",
 		NavLocation:              "Location",
 		NavDetails:               "Good to know",
@@ -216,6 +220,8 @@ var translations = map[Language]Translation{
 		WeekendTitle:             "Společný víkend",
 		WeekendIntro:             "Těšíme se, že s vámi oslavíme naši svatbu v Újezdě. Statek máme od pátku do neděle.",
 		AddCalendar:              "Přidat do kalendáře",
+		CalendarTitle:            "Svatba Lukyho a Lelainy",
+		CalendarDescription:      "Obřad začíná v 11:00 místního času.",
 		NavWeekend:               "Víkend",
 		NavLocation:              "Místo",
 		NavDetails:               "Praktické informace",
@@ -288,6 +294,8 @@ var translations = map[Language]Translation{
 		WeekendTitle:             "Ein Wochenende zusammen",
 		WeekendIntro:             "Wir freuen uns darauf, mit euch in Újezd zu feiern. Das Gelände steht uns von Freitag bis Sonntag zur Verfügung.",
 		AddCalendar:              "Zum Kalender hinzufügen",
+		CalendarTitle:            "Hochzeit von Luky und Lelaina",
+		CalendarDescription:      "Die Trauung beginnt um 11:00 Uhr Ortszeit.",
 		NavWeekend:               "Wochenende",
 		NavLocation:              "Ort",
 		NavDetails:               "Gut zu wissen",

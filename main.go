@@ -12,6 +12,7 @@ func main() {
 	mux.HandleFunc("/", landingHandler)
 	mux.HandleFunc("/rsvp", rsvpHandler)
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
+	mux.HandleFunc("/static/wedding.ics", calendarHandler)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	mux.HandleFunc("/admin/login", adminLoginHandler)
 	mux.HandleFunc("/admin", adminHandler)

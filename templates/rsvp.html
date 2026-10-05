@@ -25,6 +25,8 @@
     </div>
   </header>
 
+  {{ template "guest-info" . }}
+
   <section id="rsvp" aria-labelledby="rsvp-title" class="scroll-mt-6 bg-[#e2f1e9] px-5 py-12 md:py-16">
     <div class="mx-auto max-w-3xl">
       {{ if .Error }}
@@ -103,8 +105,6 @@
       </p>
     </div>
   </section>
-
-  {{ template "guest-info" . }}
 </body>
 </html>
 {{ end }}

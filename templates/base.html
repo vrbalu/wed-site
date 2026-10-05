@@ -66,7 +66,7 @@
         <h2 id="guest-info-title" class="font-display mt-2 text-3xl text-stone-900 md:text-4xl">{{ .Text.WeekendTitle }}</h2>
         <p class="mt-3 max-w-xl leading-relaxed text-stone-600">{{ .Text.WeekendIntro }}</p>
       </div>
-      <a href="/static/wedding.ics" download class="inline-flex shrink-0 items-center justify-center rounded-xl bg-stone-900 px-5 py-3 font-semibold text-white transition hover:bg-stone-700">{{ .Text.AddCalendar }}</a>
+      <a href="/static/wedding.ics?code={{ if .Invitation }}{{ .Invitation.Code }}{{ end }}" download class="inline-flex shrink-0 items-center justify-center rounded-xl bg-stone-900 px-5 py-3 font-semibold text-white transition hover:bg-stone-700">{{ .Text.AddCalendar }}</a>
     </div>
 
     <nav aria-label="{{ .Text.WeddingNav }}" class="mt-9 flex flex-wrap gap-x-7 gap-y-3 border-y border-stone-200 py-4 text-sm font-semibold text-stone-700">
@@ -120,7 +120,7 @@
 
   <section id="good-to-know" aria-labelledby="details-title" data-reveal class="mx-auto max-w-6xl scroll-mt-6 px-5 py-12 md:py-16">
     <p class="text-sm font-semibold uppercase tracking-[0.2em] text-[#356f60]">{{ .Text.FewDetails }}</p>
-    <h2 id="details-title" class="font-display mt-2 text-3xl text-stone-900">Good to know</h2>
+    <h2 id="details-title" class="font-display mt-2 text-3xl text-stone-900">{{ .Text.NavDetails }}</h2>
     <div class="mt-7 grid gap-7 border-t border-stone-200 pt-6 sm:grid-cols-3 sm:gap-8">
       <div>
         <h3 class="font-semibold text-stone-900">{{ .Text.Parking }}</h3>
