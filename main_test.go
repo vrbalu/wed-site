@@ -49,7 +49,7 @@ func TestRenderRSVPPageWithoutSavedRSVP(t *testing.T) {
 		"28 August",
 		"Statek &Uacute;jezd u Pl&aacute;nice",
 		"field behind the venue",
-		"Honz&iacute; and Anna",
+		"Honzí and Anna",
 		"/static/wedding.ics",
 	} {
 		if !strings.Contains(rr.Body.String(), expected) {
@@ -72,6 +72,67 @@ func TestLandingPageIncludesGuestInformation(t *testing.T) {
 		if !strings.Contains(rr.Body.String(), expected) {
 			t.Errorf("landing page body missing %q", expected)
 		}
+	}
+}
+
+func TestGuestLanguageFollowsSubdomain(t *testing.T) {
+	tests := []struct {
+		host     string
+		language string
+		text     string
+	}{
+		{host: "cs.example.com", language: "cs", text: "Bereme se"},
+		{host: "cz.example.com:8080", language: "cs", text: "Bereme se"},
+		{host: "de.example.com", language: "de", text: "Wir heiraten"},
+		{host: "en.example.com", language: "en", text: "getting married"},
+		{host: "localhost:8080", language: "en", text: "getting married"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.host, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "http://"+test.host+"/", nil)
+			res := httptest.NewRecorder()
+
+			renderGuestPage(res, req, "landing.html", PageData{})
+
+			if !strings.Contains(res.Body.String(), `lang="`+test.language+`"`) {
+				t.Errorf("page language does not match host %q: %s", test.host, res.Body.String())
+			}
+			if !strings.Contains(res.Body.String(), test.text) {
+				t.Errorf("page text for host %q does not contain %q", test.host, test.text)
+			}
+		})
+	}
+}
+
+func TestGermanRSVPUsesTranslatedLabelsAndStableValues(t *testing.T) {
+	invitation := Invitation{Code: "ALICE-BOB-7K2P", CoupleName: "Alice & Bob"}
+	req := httptest.NewRequest(http.MethodGet, "http://de.example.com/rsvp", nil)
+	res := httptest.NewRecorder()
+
+	renderGuestPage(res, req, "rsvp.html", PageData{Invitation: &invitation})
+	body := res.Body.String()
+
+	for _, expected := range []string{
+		`lang="de"`,
+		"Allergien oder Ernährungswünsche",
+		"Rückmeldung senden",
+		`name="accommodation" value="I will organise myself"`,
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("German RSVP page missing %q", expected)
+		}
+	}
+}
+
+func TestInvalidInvitationErrorUsesHostLanguage(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "http://cs.example.com/", nil)
+	res := httptest.NewRecorder()
+
+	renderGuestPage(res, req, "landing.html", PageData{ErrorKey: errorInvalidInvitation})
+
+	if !strings.Contains(res.Body.String(), "Tento kód pozvánky se nepodařilo najít") {
+		t.Fatalf("Czech page should show a Czech invitation error: %s", res.Body.String())
 	}
 }
 

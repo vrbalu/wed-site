@@ -1,11 +1,11 @@
 {{ define "rsvp.html" }}
 {{ $guestNames := invitationGuestNames .Invitation }}
 <!doctype html>
-<html lang="en">
+<html lang="{{ .Language }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RSVP · Luky &amp; Lelaina</title>
+  <title>{{ .Text.RSVPTitle }}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,16 +16,16 @@
   </style>
 </head>
 <body class="min-h-screen bg-stone-50 text-stone-800">
-  <header class="bg-gradient-to-br from-rose-50 via-stone-50 to-amber-50 px-5 py-12 md:py-16">
+  <header class="bg-gradient-to-br from-[#d7eee4] via-[#f3f8f5] to-[#eef4e9] px-5 py-12 md:py-16">
     <div class="mx-auto max-w-3xl text-center">
-        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-rose-700">You're invited</p>
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-[#356f60]">{{ .Text.Invited }}</p>
         <h1 class="font-display mt-3 text-5xl text-stone-900 md:text-6xl">Luky &amp; Lelaina</h1>
-        <p class="mt-4 text-lg font-medium text-stone-700">Dear {{ range $index, $name := $guestNames }}{{ if $index }} &amp; {{ end }}{{ $name }}{{ end }},</p>
-        <p class="mt-2 text-stone-600">We have reserved {{ len $guestNames }} {{ if eq (len $guestNames) 1 }}seat{{ else }}seats{{ end }} for you.</p>
+        <p class="mt-4 text-lg font-medium text-stone-700">{{ .Text.GreetingPrefix }} {{ range $index, $name := $guestNames }}{{ if $index }}{{ $.Text.NameSeparator }}{{ end }}{{ $name }}{{ end }}{{ .Text.GreetingSuffix }}</p>
+        <p class="mt-2 text-stone-600">{{ if eq (len $guestNames) 1 }}{{ printf .Text.ReservedSingle (len $guestNames) }}{{ else if eq (len $guestNames) 2 }}{{ printf .Text.ReservedDual (len $guestNames) }}{{ else }}{{ printf .Text.ReservedMultiple (len $guestNames) }}{{ end }}</p>
     </div>
   </header>
 
-  <section id="rsvp" aria-labelledby="rsvp-title" class="scroll-mt-6 bg-rose-50/60 px-5 py-12 md:py-16">
+  <section id="rsvp" aria-labelledby="rsvp-title" class="scroll-mt-6 bg-[#e2f1e9] px-5 py-12 md:py-16">
     <div class="mx-auto max-w-3xl">
       {{ if .Error }}
       <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-700">
@@ -38,7 +38,7 @@
 
         <div class="space-y-4">
           <h2 id="rsvp-title" class="font-display text-3xl text-stone-900">RSVP</h2>
-          <p class="text-stone-600">Let us know who can join us.</p>
+          <p class="text-stone-600">{{ .Text.GuestJoinPrompt }}</p>
 
           {{ range $index, $name := $guestNames }}
           <div data-guest-card class="rounded-2xl border border-stone-200 bg-stone-50 p-4">
@@ -46,40 +46,40 @@
               <label class="font-medium text-stone-800">{{ $name }}</label>
               <label class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-medium text-stone-700">
                 <input type="checkbox" name="guest_{{ $index }}_attending" value="{{ $name }}" {{ if and $.HasRSVP $.RSVP (index $.RSVP.Guests $index) }}{{ if (index $.RSVP.Guests $index).Attending }}checked{{ end }}{{ end }}>
-                Coming
+                {{ $.Text.Coming }}
               </label>
             </div>
 
             <div class="guest-details hidden rounded-xl border border-stone-200 bg-white p-3">
-              <label for="guest_{{ $index }}_allergies" class="mb-2 block text-sm font-medium text-stone-700">Allergies or dietary needs</label>
-              <input id="guest_{{ $index }}_allergies" name="guest_{{ $index }}_allergies" type="text" maxlength="500" value="{{ if and $.HasRSVP $.RSVP (gt (len $.RSVP.Guests) $index) }}{{ (index $.RSVP.Guests $index).Allergies }}{{ end }}" placeholder="e.g. nuts, gluten..." class="w-full rounded-xl border border-stone-300 px-4 py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-200">
+              <label for="guest_{{ $index }}_allergies" class="mb-2 block text-sm font-medium text-stone-700">{{ $.Text.Allergies }}</label>
+              <input id="guest_{{ $index }}_allergies" name="guest_{{ $index }}_allergies" type="text" maxlength="500" value="{{ if and $.HasRSVP $.RSVP (gt (len $.RSVP.Guests) $index) }}{{ (index $.RSVP.Guests $index).Allergies }}{{ end }}" placeholder="{{ $.Text.AllergyPlaceholder }}" class="w-full rounded-xl border border-stone-300 px-4 py-3 outline-none focus:border-[#5f9d83] focus:ring-2 focus:ring-[#c6e5d8]">
             </div>
           </div>
           {{ end }}
         </div>
 
         <div class="space-y-3">
-          <label class="block text-lg font-semibold">Accommodation</label>
+          <label class="block text-lg font-semibold">{{ .Text.Accommodation }}</label>
           <label class="flex items-center gap-3 rounded-2xl border border-stone-200 p-3">
             <input type="radio" name="accommodation" value="I will organise myself" {{ if and .HasRSVP .RSVP (eq .RSVP.Accommodation "I will organise myself") }}checked{{ end }}>
-            <span>I'll arrange my own accommodation</span>
+            <span>{{ .Text.AccommodationOwn }}</span>
           </label>
           <label class="flex items-center gap-3 rounded-2xl border border-stone-200 p-3">
             <input type="radio" name="accommodation" value="If you find me place, it will be awsome!" {{ if and .HasRSVP .RSVP (eq .RSVP.Accommodation "If you find me place, it will be awsome!") }}checked{{ end }}>
-            <span>I'd appreciate help arranging accommodation</span>
+            <span>{{ .Text.AccommodationHelp }}</span>
           </label>
         </div>
 
         <div>
           <label for="message" class="mb-2 block font-semibold">
-            A message for us
-            <span class="font-normal text-stone-400">(optional)</span>
+            {{ .Text.MessageLabel }}
+            <span class="font-normal text-stone-400">{{ .Text.Optional }}</span>
           </label>
-          <textarea id="message" name="message" rows="4" maxlength="1000" placeholder="Leave us a little note..." class="w-full rounded-xl border border-stone-300 px-4 py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-200">{{ if .RSVP }}{{ .RSVP.Message }}{{ end }}</textarea>
+          <textarea id="message" name="message" rows="4" maxlength="1000" placeholder="{{ .Text.MessagePlaceholder }}" class="w-full rounded-xl border border-stone-300 px-4 py-3 outline-none focus:border-[#5f9d83] focus:ring-2 focus:ring-[#c6e5d8]">{{ if .RSVP }}{{ .RSVP.Message }}{{ end }}</textarea>
         </div>
 
         <button type="submit" class="w-full rounded-xl bg-stone-900 px-6 py-4 font-semibold text-white transition hover:bg-stone-700">
-          {{ if .HasRSVP }}Update my RSVP{{ else }}Send my RSVP{{ end }}
+          {{ if .HasRSVP }}{{ .Text.UpdateRSVP }}{{ else }}{{ .Text.SendRSVP }}{{ end }}
         </button>
       </form>
 
@@ -99,7 +99,7 @@
       </script>
 
       <p class="mt-6 text-center text-sm text-stone-500">
-        Invitation: {{ if .Invitation }}{{ .Invitation.Code }}{{ end }}
+        {{ .Text.InvitationLabel }} {{ if .Invitation }}{{ .Invitation.Code }}{{ end }}
       </p>
     </div>
   </section>

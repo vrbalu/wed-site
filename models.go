@@ -37,6 +37,9 @@ type PageData struct {
 	RSVP       *RSVP
 	HasRSVP    bool
 	Error      string
+	ErrorKey   string
+	Language   Language
+	Text       Translation
 }
 
 // AdminData is used by the admin dashboard.

@@ -37,6 +37,32 @@ You can also go directly to:
 http://localhost:8080/?code=ALICE-BOB-7K2P
 ```
 
+## Language subdomains
+
+The guest-facing pages select Czech, German, or English from the first hostname label:
+
+- `cs.example.com` or `cz.example.com`: Czech
+- `de.example.com`: German
+- `en.example.com`: English
+
+Point all three DNS records at the same deployment, configure a TLS certificate that covers all three hostnames, and route them to one Go app process. The reverse proxy must preserve the original `Host` header so the app can select the language. For example, a Caddy site can use:
+
+```caddy
+en.example.com, cs.example.com, de.example.com {
+	reverse_proxy localhost:8080
+}
+```
+
+Caddy can obtain HTTPS certificates automatically once DNS points to the server and ports 80/443 are reachable. With Nginx, forward the host using `proxy_set_header Host $host;`.
+
+To test locally without DNS, send a host header:
+
+```bash
+curl -H 'Host: cs.example.com' http://localhost:8080/
+```
+
+Translations are in `i18n.go`; an unrecognized hostname defaults to English.
+
 ### 3. Admin
 
 Open:

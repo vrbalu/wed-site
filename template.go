@@ -22,6 +22,16 @@ func render(
 	name string,
 	data any,
 ) {
+	if pageData, ok := data.(PageData); ok {
+		if pageData.Language == "" {
+			pageData.Language = languageEnglish
+		}
+		if pageData.Text.LandingTitle == "" {
+			pageData.Text = translationsFor(pageData.Language)
+		}
+		data = pageData
+	}
+
 	w.Header().Set(
 		"Content-Type",
 		"text/html; charset=utf-8",
@@ -54,4 +64,29 @@ func render(
 			err,
 		)
 	}
+}
+
+func renderGuestPage(
+	w http.ResponseWriter,
+	r *http.Request,
+	name string,
+	data PageData,
+) {
+	data.Language = languageForHost(r.Host)
+	data.Text = translationsFor(data.Language)
+
+	switch data.ErrorKey {
+	case errorInvalidInvitation:
+		data.Error = data.Text.InvalidInvitation
+	case errorAllergies:
+		data.Error = data.Text.ErrorAllergies
+	case errorAccommodation:
+		data.Error = data.Text.ErrorAccommodation
+	case errorMessage:
+		data.Error = data.Text.ErrorMessage
+	case errorSave:
+		data.Error = data.Text.ErrorSave
+	}
+
+	render(w, name, data)
 }

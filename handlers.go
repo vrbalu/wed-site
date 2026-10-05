@@ -27,8 +27,9 @@ func landingHandler(
 	)
 
 	if code == "" {
-		render(
+		renderGuestPage(
 			w,
+			r,
 			"landing.html",
 			PageData{},
 		)
@@ -38,11 +39,12 @@ func landingHandler(
 	invitation, ok := getInvitation(code)
 
 	if !ok {
-		render(
+		renderGuestPage(
 			w,
+			r,
 			"landing.html",
 			PageData{
-				Error: "That invitation code was not found. Please check the code and try again.",
+				ErrorKey: errorInvalidInvitation,
 			},
 		)
 		return
@@ -110,8 +112,9 @@ func showRSVP(
 		rsvpPtr = &copy
 	}
 
-	render(
+	renderGuestPage(
 		w,
+		r,
 		"rsvp.html",
 		PageData{
 			Invitation: &invitation,
@@ -168,12 +171,13 @@ func submitRSVP(
 		)
 
 		if len(allergies) > 500 {
-			render(
+			renderGuestPage(
 				w,
+				r,
 				"rsvp.html",
 				PageData{
 					Invitation: &invitation,
-					Error:      "Please keep each guest's allergy note reasonably short.",
+					ErrorKey:   errorAllergies,
 				},
 			)
 			return
@@ -204,12 +208,13 @@ func submitRSVP(
 	)
 	if accommodation != "I will organise myself" &&
 		accommodation != "If you find me place, it will be awsome!" {
-		render(
+		renderGuestPage(
 			w,
+			r,
 			"rsvp.html",
 			PageData{
 				Invitation: &invitation,
-				Error:      "Please tell us how you would like to handle accommodation.",
+				ErrorKey:   errorAccommodation,
 			},
 		)
 		return
@@ -220,12 +225,13 @@ func submitRSVP(
 	)
 
 	if len(message) > 1000 {
-		render(
+		renderGuestPage(
 			w,
+			r,
 			"rsvp.html",
 			PageData{
 				Invitation: &invitation,
-				Error:      "Please keep your message reasonably short.",
+				ErrorKey:   errorMessage,
 			},
 		)
 		return
@@ -248,12 +254,13 @@ func submitRSVP(
 	}
 
 	if err := repo.SaveRSVP(rsvp); err != nil {
-		render(
+		renderGuestPage(
 			w,
+			r,
 			"rsvp.html",
 			PageData{
 				Invitation: &invitation,
-				Error:      "There was a problem saving your RSVP. Please try again.",
+				ErrorKey:   errorSave,
 			},
 		)
 		return
@@ -263,8 +270,9 @@ func submitRSVP(
 	rsvpStore[invitation.Code] = rsvp
 	storeMu.Unlock()
 
-	render(
+	renderGuestPage(
 		w,
+		r,
 		"success.html",
 		PageData{
 			Invitation: &invitation,
